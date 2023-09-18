@@ -14,6 +14,11 @@
   ],
   "author": "Ivan Litskevich",
   "license": "ISC",
+  "homepage": "https://frontend-project-11-five-sooty.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sxkote/frontend-project-11"
+  },
   "devDependencies": {
     "@babel/core": "^7.22.20",
     "@babel/eslint-parser": "^7.22.15",
