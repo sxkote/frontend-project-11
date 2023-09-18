@@ -1,0 +1,12 @@
+@import "~bootstrap/scss/bootstrap";
+
+.brd{
+    border: 1px solid red;
+}
+
+div.box{
+    border: 1px solid green;
+    .el{
+        color:red;
+    }
+}
