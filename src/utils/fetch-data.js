@@ -26,9 +26,7 @@ export const parseFeedData = (data, url) => {
 
   const parseError = document.querySelector('parsererror');
   if (parseError) {
-    const error = new Error(parseError.textContent);
-    error.type = 'parse-feed';
-    throw error;
+    throw new Error('errors.notValidRSS');
   }
 
   const title = document.querySelector('title').textContent;

@@ -1,23 +1,9 @@
 import onChange from 'on-change';
+import i18next from 'i18next';
 import validateUrl from './utils/validator.js';
 import { fetchFeedFromUrl, parseFeedData } from './utils/fetch-data.js';
 import render from './utils/render.js';
-
-const handleError = (error) => {
-  if (error.type === 'parse-feed') {
-    return 'Не верный формат RSS!';
-  }
-
-  if (error.type === 'url-format') {
-    return 'Ссылка должна быть валидным URL!';
-  }
-
-  if (error.type === 'url-duplicate') {
-    return 'Данный URL уже добавлен!';
-  }
-
-  return 'Произошла непредвиденная ошибка в приложении!';
-};
+import resources from './locales/resources.js';
 
 const handleNewFeedData = (data, watchedState) => {
   watchedState.feeds.push(data.feed);
@@ -25,6 +11,14 @@ const handleNewFeedData = (data, watchedState) => {
 };
 
 const app = () => {
+  const i18options = {
+    lng: 'ru',
+    debug: true,
+    resources,
+    supportedLngs: ['ru', 'en'],
+    fallbackLng: 'ru',
+  };
+
   const state = {
     formState: 'empty',
     error: null,
@@ -44,9 +38,13 @@ const app = () => {
     modalBody: document.querySelector('.modal-body'),
   };
 
-  const watchedState = onChange(state, render(elements));
+  const i18instance = i18next.createInstance();
 
-  elements.form.addEventListener('submit', (e) => {
+  const watchedState = onChange(state, render(elements, i18instance));
+
+  const getErrorText = (error) => (!error || !error.message ? '' : i18instance.t(error.message));
+
+  const submit = (e) => {
     e.preventDefault();
     const existingUrls = watchedState.feeds.map((feed) => feed.url);
     const formData = new FormData(e.target);
@@ -64,8 +62,12 @@ const app = () => {
       })
       .catch((error) => {
         watchedState.formState = 'input-error';
-        watchedState.error = handleError(error);
+        watchedState.error = getErrorText(error);
       });
+  };
+
+  i18instance.init(i18options).then(() => {
+    elements.form.addEventListener('submit', submit);
   });
 };
 
