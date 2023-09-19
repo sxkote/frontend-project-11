@@ -9,7 +9,7 @@ import resources from './locales/resources.js';
 const app = () => {
   const i18options = {
     lng: 'ru',
-    debug: true,
+    debug: false,
     resources,
     supportedLngs: ['ru', 'en'],
     fallbackLng: 'ru',
@@ -20,6 +20,8 @@ const app = () => {
     error: null,
     feeds: [],
     posts: [],
+    readPosts: [],
+    viewPost: null,
   };
 
   const elements = {
@@ -32,11 +34,12 @@ const app = () => {
     modal: document.querySelector('.modal'),
     modalHeader: document.querySelector('.modal-header'),
     modalBody: document.querySelector('.modal-body'),
+    modalHref: document.querySelector('.full-article'),
   };
 
   const i18instance = i18next.createInstance();
 
-  const watchedState = onChange(state, render(elements, i18instance));
+  const watchedState = onChange(state, render(state, elements, i18instance));
 
   const getErrorText = (error) => (!error || !error.message ? '' : i18instance.t(error.message));
 
@@ -63,6 +66,12 @@ const app = () => {
       });
   };
 
+  const viewPost = (postId) => {
+    if (!postId) return;
+    watchedState.viewPost = watchedState.posts.find((p) => p.id === postId);
+    watchedState.readPosts.push(postId);
+  };
+
   const refreshPosts = () => {
     const promises = watchedState.feeds.map((feed) => fetchFeedFromUrl(feed.url)
       .then((response) => {
@@ -85,6 +94,8 @@ const app = () => {
 
   i18instance.init(i18options).then(() => {
     elements.form.addEventListener('submit', submit);
+    elements.posts.addEventListener('click', (e) => viewPost(e.target.dataset.id));
+
     refreshPosts();
   });
 };

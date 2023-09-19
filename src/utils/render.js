@@ -1,7 +1,17 @@
 const buildElement = (tag, ...classes) => {
   const element = document.createElement(tag);
-  element.classList.add(classes);
+  element.classList.add(...classes);
   return element;
+};
+
+const buildPostButton = (post, i18next) => {
+  const button = buildElement('button', 'btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('type', 'button');
+  button.setAttribute('data-id', post.id);
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
+  button.textContent = i18next.t('buttons.view');
+  return button;
 };
 
 const setFeedBack = (elements, style, text) => {
@@ -55,6 +65,12 @@ const renderError = (elements, errorText) => {
   setFeedBack(elements, 'text-danger', errorText);
 };
 
+const renderModal = (elements, post) => {
+  elements.modalHeader.textContent = post.title;
+  elements.modalBody.textContent = post.description;
+  elements.modalHref.setAttribute('href', post.link);
+};
+
 const buildFeed = (feed) => {
   const li = buildElement('li', 'list-group-item', 'border-0', 'border-end-0');
   const title = buildElement('h3', 'h6', 'm-0');
@@ -66,7 +82,7 @@ const buildFeed = (feed) => {
   return li;
 };
 
-const buildPost = (post) => {
+const buildPost = (state, post, i18next) => {
   const li = buildElement(
     'li',
     'list-group-item',
@@ -76,17 +92,20 @@ const buildPost = (post) => {
     'border-0',
     'border-end-0',
   );
-  const a = buildElement('a', 'fw-bold');
+  const a = buildElement('a', state.readPosts.some((id) => id === post.id) ? 'fw-normal' : 'fw-bold');
   a.setAttribute('href', post.link);
   a.setAttribute('data-id', post.id);
   a.setAttribute('target', '_blank');
   a.setAttribute('rel', 'noopener noreferrer');
   a.textContent = post.title;
   li.append(a);
+  const button = buildPostButton(post, i18next);
+  li.append(button);
   return li;
 };
 
-const buildList = (type, items, i18next) => {
+const buildList = (state, type, i18next) => {
+  const items = state[type];
   const card = buildElement('div', 'card', 'border-0');
   const cardBody = buildElement('div', 'card-body');
   const cardTitle = buildElement('h2', 'card-title', 'h4');
@@ -94,7 +113,7 @@ const buildList = (type, items, i18next) => {
   cardTitle.textContent = i18next.t(`labels.${type}`);
   items.forEach((i) => {
     if (type === 'feeds') list.append(buildFeed(i));
-    if (type === 'posts') list.append(buildPost(i));
+    if (type === 'posts') list.append(buildPost(state, i, i18next));
   });
   cardBody.append(cardTitle);
   card.append(cardBody);
@@ -102,7 +121,7 @@ const buildList = (type, items, i18next) => {
   return card;
 };
 
-const render = (elements, i18next) => (path, value) => {
+const render = (state, elements, i18next) => (path, value) => {
   switch (path) {
     case 'formState':
       renderState(elements, i18next, value);
@@ -112,11 +131,15 @@ const render = (elements, i18next) => (path, value) => {
       break;
     case 'feeds':
       elements.feeds.innerHTML = '';
-      elements.feeds.append(buildList('feeds', value, i18next));
+      elements.feeds.append(buildList(state, 'feeds', i18next));
       break;
     case 'posts':
+    case 'readPosts':
       elements.posts.innerHTML = '';
-      elements.posts.append(buildList('posts', value, i18next));
+      elements.posts.append(buildList(state, 'posts', i18next));
+      break;
+    case 'viewPost':
+      renderModal(elements, value);
       break;
     default:
       break;
