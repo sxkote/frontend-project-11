@@ -5,7 +5,9 @@ export const fetchFeedFromUrl = (url) => {
   const proxyUrl = new URL('/get', 'https://allorigins.hexlet.app');
   proxyUrl.searchParams.append('disableCache', 'true');
   proxyUrl.searchParams.append('url', url);
-  return axios.get(proxyUrl.toString());
+  return axios.get(proxyUrl.toString()).catch(() => {
+    throw new Error('errors.network');
+  });
 };
 
 const parseFeedPost = (post) => {
