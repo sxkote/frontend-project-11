@@ -111,12 +111,10 @@ const render = (elements, i18next) => (path, value) => {
       renderError(elements, value);
       break;
     case 'feeds':
-      console.dir(value);
       elements.feeds.innerHTML = '';
       elements.feeds.append(buildList('feeds', value, i18next));
       break;
     case 'posts':
-      console.dir(value);
       elements.posts.innerHTML = '';
       elements.posts.append(buildList('posts', value, i18next));
       break;

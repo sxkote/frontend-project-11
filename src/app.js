@@ -1,14 +1,10 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
+import { uniqueId } from 'lodash';
 import validateUrl from './utils/validator.js';
-import { fetchFeedFromUrl, parseFeedDataWithIds } from './utils/rss.js';
+import { fetchFeedFromUrl, parseFeedData, parseFeedDataWithIds } from './utils/rss.js';
 import render from './utils/render.js';
 import resources from './locales/resources.js';
-
-const handleNewFeedData = (data, watchedState) => {
-  watchedState.feeds.push(data.feed);
-  watchedState.posts.push(...data.posts);
-};
 
 const app = () => {
   const i18options = {
@@ -57,7 +53,8 @@ const app = () => {
       })
       .then((response) => {
         const feedData = parseFeedDataWithIds(response.data.contents, inputUrl);
-        handleNewFeedData(feedData, watchedState);
+        watchedState.feeds.push(feedData.feed);
+        watchedState.posts.push(...feedData.posts);
         watchedState.formState = 'feed-added';
       })
       .catch((error) => {
@@ -66,8 +63,29 @@ const app = () => {
       });
   };
 
+  const refreshPosts = () => {
+    const promises = watchedState.feeds.map((feed) => fetchFeedFromUrl(feed.url)
+      .then((response) => {
+        const feedData = parseFeedData(response.data.contents);
+        const currentPostLinks = watchedState.posts
+          .filter((post) => post.feedId === feed.id)
+          .map((post) => post.link);
+        const newPosts = feedData.posts.filter((post) => !currentPostLinks.includes(post.link));
+        newPosts.forEach((post) => {
+          post.id = uniqueId();
+          post.feedId = feed.id;
+        });
+        watchedState.posts.unshift(...newPosts);
+      })
+      .catch((error) => {
+        console.error(`Error fetching data from feed ${feed.id}:`, error);
+      }));
+    return Promise.all(promises).finally(() => setTimeout(refreshPosts, 5000));
+  };
+
   i18instance.init(i18options).then(() => {
     elements.form.addEventListener('submit', submit);
+    refreshPosts();
   });
 };
 
