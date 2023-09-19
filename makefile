@@ -1,6 +1,8 @@
 develop:
 	npx webpack serve
 
+debug: develop
+
 install:
 	npm ci
 

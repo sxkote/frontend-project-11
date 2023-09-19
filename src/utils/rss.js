@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { uniqueId } from 'lodash';
 
 export const fetchFeedFromUrl = (url) => {
   const proxyUrl = new URL('/get', 'https://allorigins.hexlet.app');
@@ -32,20 +33,6 @@ export const parseFeedData = (data, url) => {
   const title = document.querySelector('title').textContent;
   const description = document.querySelector('description').textContent;
 
-  const links = [];
-  const items = document.querySelectorAll('item');
-
-  items.forEach((item) => {
-    const name = item.querySelector('title').textContent;
-    const desc = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
-    links.push({
-      title: name,
-      description: desc,
-      link,
-    });
-  });
-
   return {
     feed: {
       url,
@@ -54,4 +41,17 @@ export const parseFeedData = (data, url) => {
     },
     posts: [...document.querySelectorAll('item')].map(parseFeedPost),
   };
+};
+
+export const parseFeedDataWithIds = (data, url) => {
+  const feedObject = parseFeedData(data, url);
+
+  const feedId = uniqueId();
+  feedObject.feed.id = feedId;
+  feedObject.posts.forEach((p) => {
+    p.id = uniqueId();
+    p.feedId = feedId;
+  });
+
+  return feedObject;
 };

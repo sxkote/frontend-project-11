@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
 import validateUrl from './utils/validator.js';
-import { fetchFeedFromUrl, parseFeedData } from './utils/fetch-data.js';
+import { fetchFeedFromUrl, parseFeedDataWithIds } from './utils/rss.js';
 import render from './utils/render.js';
 import resources from './locales/resources.js';
 
@@ -56,7 +56,7 @@ const app = () => {
         return fetchFeedFromUrl(inputUrl);
       })
       .then((response) => {
-        const feedData = parseFeedData(response.data.contents, inputUrl);
+        const feedData = parseFeedDataWithIds(response.data.contents, inputUrl);
         handleNewFeedData(feedData, watchedState);
         watchedState.formState = 'feed-added';
       })
