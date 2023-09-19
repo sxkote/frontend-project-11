@@ -1,7 +1,7 @@
 export default {
   translation: {
     errors: {
-      emptyUrl: 'Необходимо указать ссылку на RSS',
+      emptyUrl: 'Не должно быть пустым',
       notValidUrl: 'Ссылка должна быть валидным URL',
       alreadyExistsUrl: 'RSS уже существует',
       notValidRSS: 'Ресурс не содержит валидный RSS',
