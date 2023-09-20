@@ -13,11 +13,17 @@ export default {
       added: 'RSS успешно загружен',
     },
     labels: {
+      header: 'RSS агрегатор',
+      subheader: 'Начните читать RSS сегодня! Это легко, это красиво.',
+      example: 'Пример: https://ru.hexlet.io/lessons.rss',
       feeds: 'Фиды',
       posts: 'Посты',
     },
     buttons: {
       view: 'Просмотр',
+      addFeed: 'Добавить',
+      readPost: 'Читать полностью',
+      close: 'Закрыть',
     },
   },
 };

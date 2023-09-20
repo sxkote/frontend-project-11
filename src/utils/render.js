@@ -14,63 +14,6 @@ const buildPostButton = (post, i18next) => {
   return button;
 };
 
-const setFeedBack = (elements, style, text) => {
-  elements.feedback.classList.remove('text-danger');
-  elements.feedback.classList.remove('text-warning');
-  elements.feedback.classList.remove('text-success');
-  elements.feedback.classList.add(style);
-  elements.feedback.textContent = text;
-};
-
-const renderStateFeedFetching = (elements, i18next) => {
-  elements.submit.disabled = true;
-  elements.urlInput.classList.remove('is-invalid');
-  setFeedBack(elements, 'text-warning', i18next.t('status.fetching'));
-};
-
-const renderStateFeedAdded = (elements, i18next) => {
-  elements.submit.disabled = false;
-  elements.form.reset();
-  elements.urlInput.classList.remove('is-invalid');
-  elements.urlInput.focus();
-  setFeedBack(elements, 'text-success', i18next.t('status.added'));
-};
-
-const renderStateInputError = (elements, errorText) => {
-  elements.submit.disabled = false;
-  elements.urlInput.classList.add('is-invalid');
-  setFeedBack(elements, 'text-danger', errorText);
-};
-
-const renderState = (elements, i18next, value) => {
-  switch (value) {
-    case 'feed-fetching':
-      renderStateFeedFetching(elements, i18next);
-      break;
-    case 'feed-added':
-      renderStateFeedAdded(elements, i18next);
-      break;
-    case 'input-error':
-      renderStateInputError(elements, '');
-      break;
-    default:
-      break;
-  }
-};
-
-const renderError = (elements, errorText) => {
-  // if (errorText === null) {
-  //   return;
-  // }
-  setFeedBack(elements, 'text-danger', errorText);
-};
-
-const renderModal = (elements, post) => {
-  elements.modalHeader.textContent = post.title;
-  elements.modalBody.textContent = post.description;
-  elements.modalHref.setAttribute('href', post.link);
-};
-
 const buildFeed = (feed) => {
   const li = buildElement('li', 'list-group-item', 'border-0', 'border-end-0');
   const title = buildElement('h3', 'h6', 'm-0');
@@ -121,25 +64,108 @@ const buildList = (state, type, i18next) => {
   return card;
 };
 
+const setFeedBack = (elements, style, text) => {
+  elements.feedback.classList.remove('text-danger');
+  elements.feedback.classList.remove('text-warning');
+  elements.feedback.classList.remove('text-success');
+  elements.feedback.classList.add(style);
+  elements.feedback.textContent = text;
+};
+
+const renderStateFeedFetching = (elements, i18next) => {
+  elements.submit.disabled = true;
+  elements.urlInput.classList.remove('is-invalid');
+  setFeedBack(elements, 'text-warning', i18next.t('status.fetching'));
+};
+
+const renderStateFeedAdded = (elements, i18next) => {
+  elements.submit.disabled = false;
+  elements.form.reset();
+  elements.urlInput.classList.remove('is-invalid');
+  elements.urlInput.focus();
+  setFeedBack(elements, 'text-success', i18next.t('status.added'));
+};
+
+const renderStateFailed = (elements, errorText) => {
+  elements.submit.disabled = false;
+  elements.urlInput.classList.add('is-invalid');
+  setFeedBack(elements, 'text-danger', errorText);
+};
+
+const renderState = (elements, i18next, value) => {
+  switch (value) {
+    case 'feed-fetching':
+      renderStateFeedFetching(elements, i18next);
+      break;
+    case 'feed-added':
+      renderStateFeedAdded(elements, i18next);
+      break;
+    case 'failed':
+      renderStateFailed(elements, '');
+      break;
+    default:
+      break;
+  }
+};
+
+const renderError = (elements, i18next, error) => {
+  setFeedBack(elements, 'text-danger', i18next.t(error));
+};
+
+const renderFeeds = (state, elements, i18next) => {
+  elements.feeds.innerHTML = '';
+  if (state.feeds.length) {
+    elements.feeds.append(buildList(state, 'feeds', i18next));
+  }
+};
+
+const renderPosts = (state, elements, i18next) => {
+  elements.posts.innerHTML = '';
+  if (state.posts.length) {
+    elements.posts.append(buildList(state, 'posts', i18next));
+  }
+};
+
+const renderModal = (elements, i18next, post) => {
+  elements.modal.header.textContent = post?.title ?? '';
+  elements.modal.body.textContent = post?.description ?? '';
+  elements.modal.href.setAttribute('href', post?.link ?? '#');
+  elements.modal.href.textContent = i18next.t('buttons.readPost');
+  elements.modal.close.textContent = i18next.t('buttons.close');
+};
+
+const renderLanguage = (elements, i18next) => {
+  elements.labels.header.textContent = i18next.t('labels.header');
+  elements.labels.subheader.textContent = i18next.t('labels.subheader');
+  elements.labels.example.textContent = i18next.t('labels.example');
+  elements.submit.textContent = i18next.t('buttons.addFeed');
+};
+
 const render = (state, elements, i18next) => (path, value) => {
   switch (path) {
     case 'formState':
       renderState(elements, i18next, value);
       break;
     case 'error':
-      renderError(elements, value);
+      renderError(elements, i18next, value);
       break;
     case 'feeds':
-      elements.feeds.innerHTML = '';
-      elements.feeds.append(buildList(state, 'feeds', i18next));
+      renderFeeds(state, elements, i18next);
       break;
     case 'posts':
     case 'readPosts':
-      elements.posts.innerHTML = '';
-      elements.posts.append(buildList(state, 'posts', i18next));
+      renderPosts(state, elements, i18next);
       break;
     case 'viewPost':
-      renderModal(elements, value);
+      renderModal(elements, i18next, value);
+      break;
+    case 'language':
+      renderLanguage(elements, i18next);
+      renderFeeds(state, elements, i18next);
+      renderPosts(state, elements, i18next);
+      renderState(elements, i18next, state.formState);
+      renderError(elements, i18next, state.error);
+      renderModal(elements, i18next, state.viewPost);
       break;
     default:
       break;

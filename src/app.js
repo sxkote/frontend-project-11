@@ -16,6 +16,7 @@ const app = () => {
   };
 
   const state = {
+    language: i18options.lng,
     formState: 'empty',
     error: null,
     feeds: [],
@@ -31,17 +32,25 @@ const app = () => {
     feedback: document.querySelector('.feedback'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
-    modal: document.querySelector('.modal'),
-    modalHeader: document.querySelector('.modal-header'),
-    modalBody: document.querySelector('.modal-body'),
-    modalHref: document.querySelector('.full-article'),
+    modal: {
+      root: document.querySelector('.modal'),
+      header: document.querySelector('.modal-header'),
+      body: document.querySelector('.modal-body'),
+      href: document.querySelector('.full-article'),
+      close: document.querySelector('.modal-footer button.btn-secondary'),
+    },
+    langRU: document.querySelector('#lang-ru'),
+    langEN: document.querySelector('#lang-en'),
+    labels: {
+      header: document.querySelector('#section-form h1'),
+      subheader: document.querySelector('#section-form p.lead'),
+      example: document.querySelector('#section-form p.text-muted'),
+    },
   };
 
   const i18instance = i18next.createInstance();
 
   const watchedState = onChange(state, render(state, elements, i18instance));
-
-  const getErrorText = (error) => (!error || !error.message ? '' : i18instance.t(error.message));
 
   const submit = (e) => {
     e.preventDefault();
@@ -61,8 +70,8 @@ const app = () => {
         watchedState.formState = 'feed-added';
       })
       .catch((error) => {
-        watchedState.formState = 'input-error';
-        watchedState.error = getErrorText(error);
+        watchedState.formState = 'failed';
+        watchedState.error = error?.message ?? 'errors.unknown';
       });
   };
 
@@ -92,9 +101,17 @@ const app = () => {
     return Promise.all(promises).finally(() => setTimeout(refreshPosts, 5000));
   };
 
+  const changeLanguage = (lang) => {
+    i18instance.changeLanguage(lang).then(() => {
+      watchedState.language = lang;
+    });
+  };
+
   i18instance.init(i18options).then(() => {
     elements.form.addEventListener('submit', submit);
     elements.posts.addEventListener('click', (e) => viewPost(e.target.dataset.id));
+    elements.langEN.addEventListener('click', () => changeLanguage('en'));
+    elements.langRU.addEventListener('click', () => changeLanguage('ru'));
 
     refreshPosts();
   });

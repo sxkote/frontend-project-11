@@ -13,11 +13,17 @@ export default {
       added: 'RSS feed added successfully',
     },
     labels: {
+      header: 'RSS aggregator',
+      subheader: 'Start reading RSS today! It is easy and cool.',
+      example: 'Example: https://hexlet.io/lessons.rss',
       feeds: 'Feeds',
       posts: 'Posts',
     },
     buttons: {
       view: 'View',
+      addFeed: 'Add Feed',
+      readPost: 'Read article',
+      close: 'Close',
     },
   },
 };

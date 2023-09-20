@@ -1,12 +1,5 @@
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
-.brd{
-    border: 1px solid red;
-}
-
-div.box{
-    border: 1px solid green;
-    .el{
-        color:red;
-    }
+.text-muted {
+  color: #6c757d !important;
 }

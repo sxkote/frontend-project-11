@@ -15,7 +15,9 @@
           </div>
           <div class="modal-body text-break"></div>
           <div class="modal-footer">
-            <a class="btn btn-primary full-article" href="#" role="button" target="_blank" rel="noopener noreferrer">Читать полностью </a>
+            <a class="btn btn-primary full-article" href="#" role="button" target="_blank" rel="noopener noreferrer"
+              >Читать полностью
+            </a>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
           </div>
         </div>
@@ -23,11 +25,24 @@
     </div>
 
     <main class="flex-grow-1">
-      <section class="container-fluid bg-dark p-5">
+      <section class="container-fluid bg-dark p-5" id="section-form">
         <div class="row">
           <div class="col-md-10 col-lg-8 mx-auto text-white">
-            <h1 class="display-3 mb-0">RSS агрегатор</h1>
-            <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+            <div class="row">
+              <div class="col">
+                <h1 class="display-3 mb-0">RSS агрегатор</h1>
+                <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+              </div>
+              <div class="col-auto">
+                <div class="btn-group" role="group" aria-label="Select Langugae">
+                  <input type="radio" class="btn-check" name="language" id="lang-ru" autocomplete="off" checked />
+                  <label class="btn btn-outline-secondary" for="lang-ru">RU</label>
+
+                  <input type="radio" class="btn-check" name="language" id="lang-en" autocomplete="off" />
+                  <label class="btn btn-outline-secondary" for="lang-en">EN</label>
+                </div>
+              </div>
+            </div>
 
             <form action="" class="rss-form text-body">
               <div class="row">
@@ -51,9 +66,11 @@
                 </div>
               </div>
             </form>
-            
-            <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
-            <p class="feedback m-0 position-absolute small text-danger"></p>
+
+            <div>
+              <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
+              <p class="feedback m-0 position-absolute small text-danger"></p>
+            </div>
           </div>
         </div>
       </section>
