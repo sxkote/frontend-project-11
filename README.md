@@ -29,6 +29,10 @@ Solution is using Webpack to deploy the application.
 `make build`
 
 
-### Preview:
+### Preview
+
+[Demo Page](https://frontend-project-11-five-sooty.vercel.app/)
+
+![screenshot.png](public/screenshot-1.png)
 
 
