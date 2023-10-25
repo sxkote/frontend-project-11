@@ -28,6 +28,9 @@ Solution is using Webpack to deploy the application.
 #### deploy the application (in dist folder)
 `make build`
 
+#### example feed
+`https://justinpot.com/feed`
+
 
 ### Preview
 
